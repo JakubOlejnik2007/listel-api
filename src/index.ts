@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import CONFIG from "./config";
 import readMessage, { pop3_getPaginatedMails } from "./pop3";
+import imapTroll from "./imap";
+import imap_getPaginatedMails from "./imap";
 
 const app = express();
 
@@ -52,7 +54,7 @@ app.get("/:protocol/receive/:pagination/:page{/:order}", async (req, res) => {
 
     if (protocol === "imap") {
 
-        res.sendStatus(200);
+        res.send(await imap_getPaginatedMails(pagination, page));
         return;
     }
 
@@ -60,8 +62,6 @@ app.get("/:protocol/receive/:pagination/:page{/:order}", async (req, res) => {
 
 })
 
-
-pop3_getPaginatedMails(20);
 
 app.listen(CONFIG.EXPRESS.PORT, () => {
     console.log(`[⚡] Server is listening on port: ${CONFIG.EXPRESS.PORT}!`);
