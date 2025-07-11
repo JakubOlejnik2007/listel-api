@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import CONFIG from "./config";
+import readMessage from "./pop3";
 
 const app = express();
 
@@ -30,7 +31,7 @@ app.get("/greet", (req, res) => {
     )
 })
 
-
+readMessage(7);
 
 app.listen(CONFIG.EXPRESS.PORT, () => {
     console.log(`[⚡] Server is listening on port: ${CONFIG.EXPRESS.PORT}!`);
