@@ -1,7 +1,12 @@
 const esbuild = require('esbuild')
+require("dotenv").config();
+
+const {
+    EXPRESS_PORT
+} = process.env
 
 const define = {
-    "key": "value"
+    "process.env.EXPRESS_PORT": EXPRESS_PORT
 }
 
 esbuild.build({
