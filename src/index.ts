@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import CONFIG from "./config";
-import readMessage from "./pop3";
+import readMessage, { pop3_getPaginatedMails } from "./pop3";
 
 const app = express();
 
@@ -31,7 +31,37 @@ app.get("/greet", (req, res) => {
     )
 })
 
-readMessage(7);
+app.get("/:protocol/receive/:pagination/:page{/:order}", async (req, res) => {
+
+    const protocol = req.params.protocol.toLowerCase();
+    const pagination = parseInt(req.params.pagination);
+    const page = parseInt(req.params.page);
+    const order = req.params.order ?? undefined;
+
+
+
+    if (isNaN(pagination) || isNaN(page)) {
+        return res.status(400).send("Invalid pagination or page number");
+    }
+
+    if (protocol === "pop3") {
+
+        res.send(await pop3_getPaginatedMails(pagination, page));
+        return;
+    }
+
+    if (protocol === "imap") {
+
+        res.sendStatus(200);
+        return;
+    }
+
+    res.status(422).send("Bad mail protocol")
+
+})
+
+
+pop3_getPaginatedMails(20);
 
 app.listen(CONFIG.EXPRESS.PORT, () => {
     console.log(`[⚡] Server is listening on port: ${CONFIG.EXPRESS.PORT}!`);
